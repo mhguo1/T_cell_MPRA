@@ -1,0 +1,28 @@
+use .bedtools-2.29.0
+use R-3.5
+use Python-2.7
+
+
+#Get Jurkat file and CD4 deltaSVM models from Beer lab website
+wget http://www.beerlab.org/deltasvm_models/downloads/deltasvm_models_e2e.tar.gz
+tar -xzf deltasvm_models_e2e.tar.gz DHS_E2_145_300_noproms_nc30_hg38_top10k_vs_neg1x_avg_weights.out
+tar -xzf deltasvm_models_e2e.tar.gz DHS_E2_33_300_noproms_nc30_hg38_top10k_vs_neg1x_avg_weights.out
+
+#make bed files of MPRA SNPs
+tail -n+2 /dir/T_cell_MPRA/annotate_mpra/mpra_data_merge.txt | awk '$6=="TGWAS" {print $3}' | sort | uniq | tr '\:' '\t' | awk 'length($3)==1 && length($4)==1 {print "chr"$1"\t"($2-1)"\t"$2"\t"$1":"$2":"$3":"$4}' > mpra_input_snps.bed 
+
+#make fasta for reference allele
+bedtools getfasta -fi /ref/genomes/hg19.fa -bed mpra_input_snps.bed -name > mpra_input_snps_ref.fa
+
+#make fasta for alternate allele
+python make_alt_fa.py #hard coded input is mpra_input_snps_ref.fa, output is mpra_input_snps_alt.fa
+
+#run delta_svm
+#Download deltasvm scripts from http://www.beerlab.org/deltasvm/downloads/deltasvm_script.tar.gz
+perl ./deltasvm_script/deltasvm.pl mpra_input_snps_ref.fa mpra_input_snps_alt.fa DHS_E2_33_300_noproms_nc30_hg38_top10k_vs_neg1x_avg_weights.out mpra_snps_E2_naive_CD4_deltaSVM.txt
+
+perl ./deltasvm_script/deltasvm.pl mpra_input_snps_ref.fa mpra_input_snps_alt.fa DHS_E2_145_300_noproms_nc30_hg38_top10k_vs_neg1x_avg_weights.out mpra_snps_E2_Jurkat_deltaSVM.txt
+
+
+
+
