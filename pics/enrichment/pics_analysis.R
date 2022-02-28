@@ -1,7 +1,7 @@
 library(stringr)
 library(ggplot2)
 
-###Run PICS enrichment. Produces Figures 1C, 2B, S6A and S7
+###Run PICS enrichment. 
 dir<-"/dir/T_cell_MPRA"
 gwas.order<- c("Crohns","MS","Psoriasis", "RA","T1D","UC", "IBD" )
 emvar_loci<-F #TRUE if doing only emvar loci. 
