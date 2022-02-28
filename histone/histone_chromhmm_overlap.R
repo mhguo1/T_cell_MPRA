@@ -68,7 +68,6 @@ for(i in 1:nrow(dat.enrichment)){
   dat.enrichment[i,]$fold<-(a/(a+c))/(b/(b+d)) #Calculate enrichment
   dat.enrichment[i,]$p<-fisher.test(rbind(c(a,b), c(c, d)), alternative="two.sided")$p.value #Calculate p-value
 }
-write.table(dat.enrichment, "ENCODE_histone_enrichment.txt", row.names = F, col.names = T, sep="\t", quote=F)
 dat.enrichment$mode<-factor(dat.enrichment$mode, levels=c("pcre", "emvar"))
 dat.enrichment$mark<-factor(dat.enrichment$mark, levels=c("H3K4me1","H3K4me3", "H3K9me3", "H3K27ac","H3K27me3", "H3K36me3", "cage", "dhs"))
 dat.enrichment$significant<-ifelse(dat.enrichment$p<(0.05/8), "*", "")
@@ -119,7 +118,6 @@ for(i in 1:nrow(dat.enrichment)){
   dat.enrichment[i,]$fold<-(a/(a+b))/(c/(c+d)) #Calculate enrichment
   dat.enrichment[i,]$p<-fisher.test(rbind(c(a,b), c(c, d)), alternative="two.sided")$p.value #calculate p-value
 }
-write.table(dat.enrichment, "ENCODE_chromhmm_enrichment.txt", row.names = F, col.names = T, sep="\t", quote=F)
 
 #Generate plots
 dat.enrichment$segmentation<-as.numeric(str_split_fixed(dat.enrichment$chromhmm, "\\_", 2)[,1])
